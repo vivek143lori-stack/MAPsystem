@@ -1,0 +1,1055 @@
+:root {
+  --bg0: #050a13;
+  --bg1: #071225;
+  --card: rgba(255, 255, 255, 0.04);
+  --line: rgba(140, 170, 220, 0.16);
+  --text: #eaf2ff;
+  --muted: rgba(234, 242, 255, 0.72);
+  --muted2: rgba(234, 242, 255, 0.55);
+  --brand: #5cf2e0;
+  --brand2: #7aa6ff;
+  --good: #4ade80;
+  --mod: #fbbf24;
+  --high: #fb923c;
+  --crit: #ef4444;
+  --shadow: 0 18px 55px rgba(0, 0, 0, 0.45);
+  --shadow2: 0 10px 28px rgba(0, 0, 0, 0.35);
+  --r: 18px;
+  --r2: 26px;
+  --max: 1540px;
+}
+
+/* Basic reset */
+* {
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+}
+body {
+  margin: 0;
+  color: var(--text);
+  background: radial-gradient(1200px 800px at 20% 10%, rgba(92, 242, 224, 0.16), transparent 60%),
+    radial-gradient(900px 700px at 85% 18%, rgba(122, 166, 255, 0.16), transparent 62%),
+    linear-gradient(180deg, var(--bg0), var(--bg1));
+  font-family: "Spline Sans", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  line-height: 1.5;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+button {
+  font: inherit;
+}
+canvas {
+  max-width: 100%;
+}
+
+.container {
+  width: min(var(--max), calc(100% - 48px));
+  margin: 0 auto;
+}
+
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: 12px;
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.85);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  z-index: 1000;
+}
+.skip-link:focus {
+  left: 12px;
+}
+
+/* Topbar */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  backdrop-filter: blur(14px);
+  background: rgba(5, 10, 19, 0.62);
+  border-bottom: 1px solid var(--line);
+}
+.topbar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 14px 0;
+}
+.topbar__right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.topbar__meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: max-content;
+}
+.brand__mark {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--brand), var(--brand2));
+  box-shadow: 0 0 0 4px rgba(92, 242, 224, 0.13), 0 0 24px rgba(122, 166, 255, 0.25);
+}
+.brand__text {
+  font-family: "Manrope", system-ui, sans-serif;
+  font-weight: 850;
+  letter-spacing: 0.2px;
+}
+.brand--small .brand__text {
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.meta-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--muted);
+  font-size: 13px;
+}
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.dot--ok {
+  background: var(--good);
+  box-shadow: 0 0 0 4px rgba(74, 222, 128, 0.12);
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.18s ease, border-color 0.18s ease;
+  box-shadow: var(--shadow2);
+}
+.btn:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(160, 190, 255, 0.22);
+}
+.btn:active {
+  transform: translateY(0);
+}
+.btn--primary {
+  border-color: rgba(92, 242, 224, 0.35);
+  background: linear-gradient(135deg, rgba(92, 242, 224, 0.22), rgba(122, 166, 255, 0.18));
+}
+.btn--ghost {
+  background: rgba(255, 255, 255, 0.03);
+}
+.btn--sm {
+  padding: 9px 12px;
+  border-radius: 14px;
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Layout */
+.dash {
+  padding: 32px 0 38px;
+}
+.dash__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin: 18px 0 16px;
+}
+.dash__header h1 {
+  margin: 0 0 8px;
+  font-family: "Manrope", system-ui, sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.6px;
+  line-height: 1.05;
+  font-size: clamp(26px, 2.6vw, 38px);
+}
+
+.muted {
+  color: var(--muted);
+  margin: 0;
+}
+.small {
+  font-size: 12px;
+  color: var(--muted2);
+}
+
+.dash__kpis {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+  flex: 1 1 100%;
+  margin-top: 10px;
+}
+.kpi {
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 12px 12px;
+}
+.kpi__label {
+  color: var(--muted2);
+  font-size: 12px;
+}
+.kpi__value {
+  margin-top: 6px;
+  font-family: "Manrope", system-ui, sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.2px;
+}
+
+.grid {
+  display: grid;
+  gap: 14px;
+}
+.grid--2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.col-span-2 {
+  grid-column: span 2;
+}
+
+.est-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 6px;
+}
+.est-item {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+/* Bottom Grid for Pollutants and Table */
+.bottom-grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: stretch;
+}
+.bottom-grid__pollutants {
+  flex: 0 0 calc(45% - 7px);
+}
+.bottom-grid__table {
+  flex: 1 1 calc(55% - 7px);
+  min-width: 0;
+}
+
+/* Cards */
+.card {
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, var(--card), rgba(255, 255, 255, 0.02));
+  border-radius: var(--r2);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.card--pad {
+  padding: 18px;
+}
+.card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.card h2 {
+  margin: 0;
+  font-family: "Manrope", system-ui, sans-serif;
+  font-weight: 850;
+  letter-spacing: -0.3px;
+  font-size: 18px;
+}
+.hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+
+/* Legend */
+.legend {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  color: var(--muted);
+  font-size: 12px;
+  align-items: center;
+}
+.legend__item {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+.sw {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.sw--good {
+  background: var(--good);
+}
+.sw--mod {
+  background: var(--mod);
+}
+.sw--high {
+  background: var(--high);
+}
+.sw--unhealthy {
+  background: var(--high);
+}
+.sw--crit {
+  background: var(--crit);
+}
+
+/* Two-column dashboard layout (Map left, Panel right) */
+.layout {
+  display: grid;
+  grid-template-columns: 1.55fr 0.85fr;
+  gap: 14px;
+  align-items: start;
+}
+
+/* Left column: stacks map card + bottom panels vertically */
+.left-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+/* Bottom panels below the map – stretch to full left-col width */
+.map-bottom-grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: stretch;
+  width: 100%;
+}
+.map-bottom-grid .bottom-grid__pollutants {
+  flex: 0 0 calc(45% - 7px);
+  min-width: 260px;
+}
+.map-bottom-grid .bottom-grid__table {
+  flex: 1 1 calc(55% - 7px);
+  min-width: 0;
+}
+.right {
+  display: grid;
+  gap: 14px;
+}
+
+/* Zone cards */
+.zone-cards {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+}
+.zone-cards--6 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.zone {
+  position: relative;
+  border: 1px solid rgba(140, 170, 220, 0.14);
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.18);
+  padding: 14px 12px;
+  box-shadow: var(--shadow2);
+  overflow: hidden;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+.zone:hover {
+  transform: translateY(-2px);
+  border-color: rgba(160, 190, 255, 0.22);
+}
+.zone:before {
+  content: "";
+  position: absolute;
+  inset: -30px -30px auto auto;
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.16), transparent 55%);
+  transform: rotate(20deg);
+  opacity: 0.7;
+}
+.zone__top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+}
+.zone__name {
+  font-family: "Manrope", system-ui, sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.2px;
+}
+.zone__aqi {
+  margin-top: 8px;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -0.3px;
+}
+.zone__meta {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(140, 170, 220, 0.14);
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 12px;
+  color: rgba(234, 242, 255, 0.86);
+}
+.zone--good {
+  border-color: rgba(74, 222, 128, 0.26);
+}
+.zone--mod {
+  border-color: rgba(251, 191, 36, 0.26);
+}
+.zone--high {
+  border-color: rgba(251, 146, 60, 0.26);
+}
+.zone--crit {
+  border-color: rgba(239, 68, 68, 0.26);
+}
+.zone--vehicle {
+  outline: 2px solid rgba(92, 242, 224, 0.65);
+  outline-offset: 2px;
+}
+.pulse {
+  animation: pulse 450ms ease;
+}
+@keyframes pulse {
+  0% {
+    transform: translateY(0);
+  }
+  35% {
+    transform: translateY(-3px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* Table */
+.table-wrap {
+  overflow: auto;
+  border-radius: 18px;
+  border: 1px solid rgba(140, 170, 220, 0.14);
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 520px;
+}
+.table th,
+.table td {
+  text-align: left;
+  padding: 12px 12px;
+  border-bottom: 1px solid rgba(140, 170, 220, 0.12);
+  color: var(--muted);
+  font-size: 13px;
+}
+.table th {
+  color: rgba(234, 242, 255, 0.86);
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.03);
+}
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Vehicle panel */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(140, 170, 220, 0.16);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--muted);
+  font-size: 12px;
+}
+.vehicle {
+  margin-top: 6px;
+  display: grid;
+  gap: 10px;
+}
+.vehicle__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(140, 170, 220, 0.14);
+  background: rgba(255, 255, 255, 0.03);
+}
+.vehicle__k {
+  color: var(--muted2);
+  font-size: 12px;
+}
+.vehicle__v {
+  font-weight: 900;
+  color: rgba(234, 242, 255, 0.92);
+}
+.vehicle__v.small {
+  font-weight: 700;
+  max-width: 46ch;
+  text-align: right;
+}
+.progress {
+  height: 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(140, 170, 220, 0.18);
+  background: rgba(255, 255, 255, 0.03);
+  overflow: hidden;
+}
+.progress__bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, rgba(92, 242, 224, 0.7), rgba(122, 166, 255, 0.7));
+  transition: width 0.4s ease;
+}
+
+/* Map panel */
+.map-card {
+  overflow: hidden;
+}
+.map-card__head {
+  padding: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid rgba(140, 170, 220, 0.12);
+}
+.map-card__head-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+/* Fullscreen trigger button */
+.btn--fs {
+  white-space: nowrap;
+  border-color: rgba(92, 242, 224, 0.25);
+  background: linear-gradient(135deg, rgba(92, 242, 224, 0.10), rgba(122, 166, 255, 0.08));
+  font-size: 13px;
+  gap: 7px;
+  padding: 8px 13px;
+  transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.btn--fs:hover {
+  border-color: rgba(92, 242, 224, 0.55);
+  box-shadow: 0 0 18px rgba(92, 242, 224, 0.18);
+  background: linear-gradient(135deg, rgba(92, 242, 224, 0.18), rgba(122, 166, 255, 0.14));
+}
+
+/* Floating Exit button (hidden by default, revealed in fullscreen) */
+.btn-exit-fs {
+  display: none;
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 1000;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(239, 68, 68, 0.40);
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.22), rgba(251, 146, 60, 0.16));
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(239, 68, 68, 0.18);
+  transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  animation: fadeInDown 0.3s ease both;
+}
+.btn-exit-fs:hover {
+  transform: translateY(-1px);
+  border-color: rgba(239, 68, 68, 0.65);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6), 0 0 22px rgba(239, 68, 68, 0.22);
+}
+.btn-exit-fs:active {
+  transform: translateY(0);
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Fullscreen state ─────────────────────────────────────────────── */
+
+/* Native browser fullscreen (:fullscreen pseudo-class on the card itself) */
+#mapCard:fullscreen,
+#mapCard:-webkit-full-screen,
+#mapCard:-moz-full-screen,
+#mapCard:-ms-fullscreen {
+  display: flex;
+  flex-direction: column;
+  border-radius: 0;
+  border: none;
+  background: #050a13;
+  z-index: 9999;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+#mapCard:fullscreen .map-card__head,
+#mapCard:-webkit-full-screen .map-card__head,
+#mapCard:-moz-full-screen .map-card__head,
+#mapCard:-ms-fullscreen .map-card__head {
+  flex-shrink: 0;
+}
+#mapCard:fullscreen .map-wrap,
+#mapCard:-webkit-full-screen .map-wrap,
+#mapCard:-moz-full-screen .map-wrap,
+#mapCard:-ms-fullscreen .map-wrap {
+  flex: 1;
+  height: auto;
+}
+#mapCard:fullscreen #btnFullscreen,
+#mapCard:-webkit-full-screen #btnFullscreen,
+#mapCard:-moz-full-screen #btnFullscreen,
+#mapCard:-ms-fullscreen #btnFullscreen {
+  display: none;
+}
+#mapCard:fullscreen #btnExitFullscreen,
+#mapCard:-webkit-full-screen #btnExitFullscreen,
+#mapCard:-moz-full-screen #btnExitFullscreen,
+#mapCard:-ms-fullscreen #btnExitFullscreen {
+  display: inline-flex;
+}
+
+/* CSS-class fallback (used when native Fullscreen API is unavailable) */
+#mapCard.is-fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  max-width: none;
+  max-height: none;
+  display: flex;
+  flex-direction: column;
+  border-radius: 0;
+  border: none;
+  background: #050a13;
+  z-index: 9999;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+#mapCard.is-fullscreen .map-card__head {
+  flex-shrink: 0;
+}
+#mapCard.is-fullscreen .map-wrap {
+  flex: 1;
+  height: auto;
+}
+#mapCard.is-fullscreen #btnFullscreen {
+  display: none;
+}
+#mapCard.is-fullscreen #btnExitFullscreen {
+  display: inline-flex;
+}
+
+.map-wrap {
+  position: relative;
+  height: 640px;
+  background: rgba(0, 0, 0, 0.2);
+}
+.map-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+}
+
+/* Leaflet UI theming (dark smart-city style) */
+.leaflet-container {
+  background: #071225;
+  font-family: "Spline Sans", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
+.leaflet-control-attribution {
+  background: rgba(5, 10, 19, 0.55) !important;
+  color: rgba(234, 242, 255, 0.75) !important;
+  border: 1px solid rgba(140, 170, 220, 0.16) !important;
+  border-radius: 12px !important;
+  backdrop-filter: blur(10px);
+}
+.leaflet-control-zoom a {
+  background: rgba(5, 10, 19, 0.72) !important;
+  color: rgba(234, 242, 255, 0.9) !important;
+  border: 1px solid rgba(140, 170, 220, 0.2) !important;
+}
+.leaflet-bar {
+  border-radius: 14px !important;
+  overflow: hidden;
+  box-shadow: var(--shadow2);
+}
+
+/* Leaflet marker bubbles (DivIcon) */
+.zone-pin {
+  transform: translate(-50%, -100%);
+  padding: 10px 10px;
+  min-width: 170px;
+  border-radius: 18px;
+  border: 1px solid rgba(140, 170, 220, 0.18);
+  background: rgba(5, 10, 19, 0.78);
+  box-shadow: var(--shadow2);
+  backdrop-filter: blur(10px);
+  color: rgba(234, 242, 255, 0.92);
+}
+.zone-pin__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+.zone-pin__name {
+  font-family: "Manrope", system-ui, sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.2px;
+  font-size: 13px;
+}
+.zone-pin__aqi {
+  font-weight: 900;
+  font-size: 18px;
+  letter-spacing: -0.2px;
+}
+.zone-pin__status {
+  margin-top: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(140, 170, 220, 0.14);
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 12px;
+  color: rgba(234, 242, 255, 0.86);
+}
+.zone-pin:after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 14px;
+  background: rgba(5, 10, 19, 0.78);
+  border-right: 1px solid rgba(140, 170, 220, 0.18);
+  border-bottom: 1px solid rgba(140, 170, 220, 0.18);
+  rotate: 45deg;
+}
+.zone-pin--good {
+  border-color: rgba(74, 222, 128, 0.28);
+}
+.zone-pin--mod {
+  border-color: rgba(251, 191, 36, 0.28);
+}
+.zone-pin--unhealthy {
+  border-color: rgba(251, 146, 60, 0.28);
+}
+.zone-pin--crit {
+  border-color: rgba(239, 68, 68, 0.28);
+}
+
+/* Vehicle marker icon */
+.vehicle-pin {
+  width: 34px;
+  height: 34px;
+  border-radius: 16px;
+  border: 1px solid rgba(92, 242, 224, 0.35);
+  background: linear-gradient(135deg, rgba(92, 242, 224, 0.22), rgba(122, 166, 255, 0.18));
+  box-shadow: 0 22px 60px rgba(92, 242, 224, 0.18);
+  display: grid;
+  place-items: center;
+  color: rgba(234, 242, 255, 0.95);
+}
+
+/* Routing line */
+.route-line {
+  stroke: rgba(92, 242, 224, 0.55);
+}
+
+/* (Old iframe overlay marker styles removed; markers are now Google Maps markers bound to lat/lng.) */
+
+/* Contact section (second and only other section) */
+.contact {
+  padding: 34px 0 60px;
+  border-top: 1px solid rgba(140, 170, 220, 0.12);
+  background: radial-gradient(900px 700px at 70% 10%, rgba(92, 242, 224, 0.08), transparent 62%),
+    rgba(255, 255, 255, 0.01);
+}
+.contact__card {
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
+  border-radius: var(--r2);
+  box-shadow: var(--shadow);
+  padding: 18px;
+}
+.contact__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid rgba(140, 170, 220, 0.12);
+  padding-bottom: 14px;
+}
+.contact__grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.9fr 0.9fr;
+  gap: 14px;
+  padding-top: 14px;
+}
+.info h3 {
+  margin: 0 0 8px;
+  font-family: "Manrope", system-ui, sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.2px;
+  font-size: 15px;
+}
+.list {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  color: var(--muted);
+}
+.mt {
+  margin-top: 14px !important;
+}
+.email {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(140, 170, 220, 0.16);
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(234, 242, 255, 0.88);
+}
+.email:hover {
+  border-color: rgba(160, 190, 255, 0.22);
+}
+.contact__footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+  border-top: 1px solid rgba(140, 170, 220, 0.12);
+  padding-top: 12px;
+}
+
+/* Responsive */
+@media (max-width: 1100px) {
+  .dash__kpis {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .zone-cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .layout {
+    grid-template-columns: 1fr;
+  }
+  .left-col {
+    width: 100%;
+  }
+  .map-bottom-grid .bottom-grid__pollutants,
+  .map-bottom-grid .bottom-grid__table {
+    flex: 1 1 100%;
+  }
+  .map-wrap {
+    height: 520px;
+  }
+}
+@media (max-width: 860px) {
+  .grid--2 {
+    grid-template-columns: 1fr;
+  }
+  .dash__kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    min-width: 0;
+  }
+  .zone-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .zone-cards--6 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .col-span-2 {
+    grid-column: span 1;
+  }
+  .est-grid {
+    grid-template-columns: 1fr;
+  }
+  .bottom-grid__pollutants,
+  .bottom-grid__table {
+    flex: 1 1 100%;
+  }
+  .contact__grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 520px) {
+  .container {
+    width: min(var(--max), calc(100% - 28px));
+  }
+  .dash__kpis {
+    grid-template-columns: 1fr;
+  }
+  .zone-cards {
+    grid-template-columns: 1fr;
+  }
+  .zone-cards--6 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Vehicle smooth animation */
+.vehicle-marker-anim {
+  transition: transform 0.25s linear;
+}
+
+/* ── Major Air Pollutants grid ────────────────────────────────────────────── */
+.pollutant-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.pollutant-card {
+  position: relative;
+  border-radius: 16px;
+  border: 1px solid rgba(140, 170, 220, 0.14);
+  background: rgba(0, 0, 0, 0.18);
+  padding: 12px 12px 10px;
+  overflow: hidden;
+  transition: transform 0.18s ease, border-color 0.18s ease;
+  border-left-width: 4px;
+  border-left-style: solid;
+}
+.pollutant-card:hover {
+  transform: translateY(-2px);
+}
+.pollutant-card--good      { border-left-color: #4ade80; }
+.pollutant-card--mod       { border-left-color: #fbbf24; }
+.pollutant-card--unhealthy { border-left-color: #fb923c; }
+.pollutant-card--crit      { border-left-color: #ef4444; }
+
+.pollutant-card__header {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 8px;
+}
+.pollutant-card__icon {
+  width: 15px;
+  height: 15px;
+  color: var(--muted2);
+  flex-shrink: 0;
+}
+.pollutant-card__label {
+  font-family: "Manrope", system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: -0.1px;
+  color: rgba(234, 242, 255, 0.9);
+}
+
+.pollutant-card__body {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+.pollutant-card__value {
+  font-family: "Manrope", system-ui, sans-serif;
+  font-weight: 900;
+  font-size: 22px;
+  letter-spacing: -0.5px;
+  color: var(--text);
+  line-height: 1;
+}
+.pollutant-card__unit {
+  font-size: 11px;
+  color: var(--muted2);
+  font-weight: 500;
+}
+
+.pollutant-card__status {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+.pollutant-card__status--good      { background: rgba(74, 222, 128, 0.15); color: #4ade80; }
+.pollutant-card__status--mod       { background: rgba(251, 191, 36, 0.15); color: #fbbf24; }
+.pollutant-card__status--unhealthy { background: rgba(251, 146, 60, 0.15); color: #fb923c; }
+.pollutant-card__status--crit      { background: rgba(239, 68, 68, 0.15);  color: #ef4444; }
+
+@media (max-width: 520px) {
+  .pollutant-grid { grid-template-columns: 1fr; }
+}

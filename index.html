@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Live smart-city AQI monitoring dashboard demo for the Dynamic AQI-Based Smart Mobile Air Purification System."
+    />
+    <title>Dynamic AQI Smart Purifier — Live Dashboard</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Spline+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="./styles.css" />
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@0.453.0/dist/umd/lucide.min.js"></script>
+    <!-- Charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+    <!-- Leaflet (OpenStreetMap) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <!-- Leaflet Routing Machine (OSRM) -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css"
+    />
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+  </head>
+
+  <body>
+    <a class="skip-link" href="#dashboard">Skip to dashboard</a>
+
+    <header class="topbar">
+      <div class="container topbar__inner">
+        <a class="brand" href="#dashboard" aria-label="Go to dashboard">
+          <span class="brand__mark" aria-hidden="true"></span>
+          <span class="brand__text">Dynamic AQI Smart Purifier</span>
+        </a>
+
+        <div class="topbar__right">
+          <div class="topbar__meta">
+            <div class="meta-pill">
+              <i data-lucide="wind" aria-hidden="true"></i>
+              Threshold: <strong> AQI &lt; 30</strong>
+            </div>
+            <div class="meta-pill" id="streamPill">
+              <span class="dot dot--ok" aria-hidden="true"></span>
+              Stream: connected
+            </div>
+          </div>
+
+          <div class="controls">
+            <button class="btn btn--ghost" type="button" id="btnPause">
+              <i data-lucide="pause" aria-hidden="true"></i>
+              Pause
+            </button>
+            <button class="btn btn--ghost" type="button" id="btnReset">
+              <i data-lucide="rotate-ccw" aria-hidden="true"></i>
+              Reset
+            </button>
+            <button class="btn btn--primary" type="button" id="btnSpike">
+              <i data-lucide="zap" aria-hidden="true"></i>
+              Trigger Spike
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- SECTION 1: Live AQI Dashboard (Berhampur Map Simulation) -->
+    <main id="dashboard" class="dash">
+      <div class="container">
+        <header class="dash__header">
+          <div>
+            <h1>Live AQI Monitoring Dashboard — Berhampur City</h1>
+            <p class="muted">
+              6 real locations act as monitoring zones. AQI values update every <strong>8 seconds</strong>.
+              The mobile purifier vehicle targets the <strong>highest AQI</strong> zone, purifies until
+              <strong>AQI &lt; 30</strong>, then moves to the next worst zone.
+            </p>
+          </div>
+          <div class="dash__kpis">
+            <div class="kpi">
+              <div class="kpi__label">Current Target</div>
+              <div class="kpi__value" id="kpiTarget">—</div>
+            </div>
+            <div class="kpi">
+              <div class="kpi__label">Vehicle Status</div>
+              <div class="kpi__value" id="kpiVehicle">—</div>
+            </div>
+            <div class="kpi">
+              <div class="kpi__label">Worst AQI</div>
+              <div class="kpi__value" id="kpiWorst">—</div>
+            </div>
+            <div class="kpi">
+              <div class="kpi__label">Distance to Target</div>
+              <div class="kpi__value" id="estDist">—</div>
+            </div>
+            <div class="kpi" id="rowTravelTime">
+              <div class="kpi__label">Expected Travel Time</div>
+              <div class="kpi__value" id="estTime">—</div>
+            </div>
+            <div class="kpi">
+              <div class="kpi__label">Est. Cleaning Time</div>
+              <div class="kpi__value" id="estClean">—</div>
+            </div>
+          </div>
+        </header>
+
+        <div class="layout">
+          <!-- Left: Map + below panels -->
+          <div class="left-col">
+          <section class="card map-card" id="mapCard" aria-label="Berhampur city map with zones">
+            <div class="map-card__head">
+              <div>
+                <h2>Berhampur City Map</h2>
+                <p class="muted small">Zone overlays are simulated markers on top of the embedded map.</p>
+              </div>
+              <div class="map-card__head-right">
+                <div class="legend" aria-label="Status colors legend">
+                  <span class="legend__item"><span class="sw sw--good"></span>Good (0–50)</span>
+                  <span class="legend__item"><span class="sw sw--mod"></span>Moderate (51–100)</span>
+                  <span class="legend__item"><span class="sw sw--unhealthy"></span>Unhealthy (101–150)</span>
+                  <span class="legend__item"><span class="sw sw--crit"></span>Very Unhealthy (151+)</span>
+                  <span class="legend__item"><i data-lucide="truck" aria-hidden="true"></i>Vehicle</span>
+                </div>
+                <button class="btn btn--ghost btn--sm btn--fs" id="btnFullscreen" type="button" title="Full Screen Map" aria-label="Enter full screen map">
+                  <i data-lucide="maximize-2" aria-hidden="true"></i>
+                  Full Screen
+                </button>
+              </div>
+            </div>
+
+            <div class="map-wrap" id="mapWrap">
+              <!-- Leaflet renders into this container -->
+              <div id="map" class="map-canvas" aria-label="Berhampur map"></div>
+              <!-- Floating exit-fullscreen button (visible only in fullscreen mode) -->
+              <button class="btn-exit-fs" id="btnExitFullscreen" type="button" aria-label="Exit full screen">
+                <i data-lucide="minimize-2" aria-hidden="true"></i>
+                Exit Full Screen
+              </button>
+            </div>
+          </section>
+          <!-- bottom-grid injected here by restructure -->
+          <div class="bottom-grid map-bottom-grid">
+            <!-- Major Air Pollutants -->
+            <section class="card card--pad bottom-grid__pollutants" aria-label="Major air pollutants">
+              <div class="card__head">
+                <h2>Major Air Pollutants</h2>
+                <div class="hint muted">
+                  <i data-lucide="wind" aria-hidden="true"></i>
+                  Simulated &middot; updates every 8 s
+                </div>
+              </div>
+              <div class="pollutant-grid" id="pollutantGrid"></div>
+            </section>
+
+            <section class="card card--pad bottom-grid__table" aria-label="AQI table">
+              <div class="card__head">
+                <h2>Zone Table</h2>
+                <div class="hint muted">
+                  <i data-lucide="table" aria-hidden="true"></i>
+                  Zone / AQI / Status
+                </div>
+              </div>
+              <div class="table-wrap" role="region" aria-label="AQI table container" tabindex="0">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Zone</th>
+                      <th scope="col">AQI</th>
+                      <th scope="col">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="aqiTableBody"></tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+          </div><!-- end .left-col -->
+
+          <!-- Right: Dashboard -->
+          <section class="right" aria-label="AQI dashboard panel">
+            <section class="card card--pad" aria-label="Zone cards">
+              <div class="card__head">
+                <h2>Zones (Live)</h2>
+                <div class="hint muted">
+                  <i data-lucide="activity" aria-hidden="true"></i>
+                  Real-time simulation
+                </div>
+              </div>
+              <div class="zone-cards zone-cards--6" id="zoneCards"></div>
+            </section>
+
+            <div class="grid grid--2">
+              <section class="card card--pad" aria-label="AQI bar chart">
+                <div class="card__head">
+                  <h2>AQI by Zone (Bar)</h2>
+                  <div class="hint muted">
+                    <i data-lucide="bar-chart-3" aria-hidden="true"></i>
+                    Updates every 8 seconds
+                  </div>
+                </div>
+                <canvas id="aqiBarChart" height="160"></canvas>
+              </section>
+
+              <section class="card card--pad" aria-label="Vehicle status panel">
+                <div class="card__head">
+                  <h2>Mobile Purifier Vehicle</h2>
+                  <span class="pill" id="vehicleModePill">—</span>
+                </div>
+                <div class="vehicle">
+                  <div class="vehicle__row">
+                    <div class="vehicle__k">Current target zone</div>
+                    <div class="vehicle__v" id="vehicleZone">—</div>
+                  </div>
+                  <div class="vehicle__row">
+                    <div class="vehicle__k">Target AQI</div>
+                    <div class="vehicle__v" id="vehicleAqi">—</div>
+                  </div>
+                  <div class="vehicle__row">
+                    <div class="vehicle__k">Status</div>
+                    <div class="vehicle__v small" id="vehicleStatusText">—</div>
+                  </div>
+                  <div class="progress" aria-label="Purification progress towards threshold">
+                    <div class="progress__bar" id="purifyProgress"></div>
+                  </div>
+                  <p class="muted small">Purifies the target until AQI drops below 30.</p>
+                </div>
+              </section>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <!-- SECTION 2: Contact / Team -->
+    <section id="contact" class="contact">
+      <div class="container">
+        <div class="contact__card">
+          <div class="contact__head">
+            <div class="contact__title">
+              <div class="brand brand--small">
+                <span class="brand__mark" aria-hidden="true"></span>
+                <span class="brand__text">Dynamic AQI-Based Smart Mobile Air Purification System</span>
+              </div>
+              <p class="muted">
+                Project team &amp; faculty guide details.
+              </p>
+            </div>
+            <a class="btn btn--ghost btn--sm" href="#dashboard">
+              <i data-lucide="arrow-up" aria-hidden="true"></i>
+              Back to dashboard
+            </a>
+          </div>
+
+          <div class="contact__grid">
+            <div class="info">
+              <h3>Team Members</h3>
+              <ul class="list">
+                <li>Amit Nayak</li>
+                <li>Ankit Singh</li>
+                <li>Ayush Parida</li>
+                <li>Odditi Mohapatra</li>
+                <li>Vivek Sahu</li>
+              </ul>
+            </div>
+
+            <div class="info">
+              <h3>Guide</h3>
+              <ul class="list">
+                <li>Mr. Kodanda Dhar Naik</li>
+                <li>Dr. Deeptimayee Sahu</li>
+              </ul>
+              <h3 class="mt">Department / College</h3>
+              <p class="muted">Department of CSE, PMEC</p>
+            </div>
+          </div>
+
+          <footer class="contact__footer">
+            <span class="muted small">Dark smart-city dashboard • simulated AQI stream • greedy dispatch demo</span>
+            <span class="muted small">© <span id="year"></span></span>
+          </footer>
+        </div>
+      </div>
+    </section>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
+
